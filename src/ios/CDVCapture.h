@@ -57,7 +57,7 @@ typedef NSUInteger CDVCaptureError;
 - (void)captureAudio:(CDVInvokedUrlCommand*)command;
 - (void)captureImage:(CDVInvokedUrlCommand*)command;
 - (CDVPluginResult*)processImage:(UIImage*)image type:(NSString*)mimeType forCallbackId:(NSString*)callbackId;
-- (void)captureVideo:(CDVInvokedUrlCommand*)command useFrontCamera:(BOOL)isFrontFacing saveToGallery:(BOOL)isSaveToGallery;
+- (void)captureVideo:(CDVInvokedUrlCommand*)command;
 - (CDVPluginResult*)processVideo:(NSString*)moviePath forCallbackId:(NSString*)callbackId;
 - (void)getMediaModes:(CDVInvokedUrlCommand*)command;
 - (void)getFormatData:(CDVInvokedUrlCommand*)command;

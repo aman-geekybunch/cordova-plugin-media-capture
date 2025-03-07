@@ -212,9 +212,9 @@
     return result;
 }
 
-- (void)captureVideo:(CDVInvokedUrlCommand*)command useFrontCamera: (BOOL)isFrontFacing saveToGallery:(BOOL)isSaveToGallery
+- (void)captureVideo:(CDVInvokedUrlCommand*)command
 {
-    self.saveVideoToGallery = isSaveToGallery;
+    
     NSString* callbackId = command.callbackId;
     NSDictionary* options = [command argumentAtIndex:0];
 
@@ -226,6 +226,11 @@
     // taking more than one video (limit) is only supported if provide own controls via cameraOverlayView property
     NSNumber* duration = [options objectForKey:@"duration"];
     NSNumber* quality = [options objectForKey:@"quality"];
+    NSNumber* frontFacing = [options objectForKey:@"frontFacing"];
+    NSNumber* saveToGallery = [options objectForKey:@"saveToGallery"];
+    if (saveToGallery == 1) {
+        self.saveVideoToGallery = TRUE;
+    }
     NSString* mediaType = nil;
 
     if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
@@ -284,7 +289,7 @@
             // pickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
             // pickerController.cameraFlashMode = UIImagePickerControllerCameraFlashModeAuto;
         }
-        if (isFrontFacing) {
+        if (frontFacing == 1) {
             pickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
         } else {
             pickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
