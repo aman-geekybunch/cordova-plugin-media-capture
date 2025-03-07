@@ -76,10 +76,11 @@
 
 @implementation CDVCapture
 @synthesize inUse;
-
+@synthesize saveVideoToGallery;
 - (void)pluginInitialize
 {
     self.inUse = NO;
+    self.saveVideoToGallery = FALSE;
 }
 
 - (void)captureAudio:(CDVInvokedUrlCommand*)command
@@ -211,8 +212,9 @@
     return result;
 }
 
-- (void)captureVideo:(CDVInvokedUrlCommand*)command
+- (void)captureVideo:(CDVInvokedUrlCommand*)command useFrontCamera: (BOOL)isFrontFacing saveToGallery:(BOOL)isSaveToGallery
 {
+    self.saveVideoToGallery = isSaveToGallery;
     NSString* callbackId = command.callbackId;
     NSDictionary* options = [command argumentAtIndex:0];
 
@@ -282,6 +284,9 @@
             // pickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
             // pickerController.cameraFlashMode = UIImagePickerControllerCameraFlashModeAuto;
         }
+        if (isFrontFacing) {
+            pickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
+        }
         // CDVImagePicker specific property
         pickerController.callbackId = callbackId;
         pickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
@@ -293,13 +298,15 @@
 {
     // save the movie to photo album (only avail as of iOS 3.1)
 
-    /* don't need, it should automatically get saved
-     NSLog(@"can save %@: %d ?", moviePath, UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(moviePath));
-    if (&UIVideoAtPathIsCompatibleWithSavedPhotosAlbum != NULL && UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(moviePath) == YES) {
-        NSLog(@"try to save movie");
-        UISaveVideoAtPathToSavedPhotosAlbum(moviePath, nil, nil, nil);
-        NSLog(@"finished saving movie");
-    }*/
+    /* don't need, it should automatically get saved*/
+    if (self.saveVideoToGallery) {
+        NSLog(@"can save %@: %d ?", moviePath, UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(moviePath));
+        if (&UIVideoAtPathIsCompatibleWithSavedPhotosAlbum != NULL && UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(moviePath) == YES) {
+            NSLog(@"try to save movie");
+            UISaveVideoAtPathToSavedPhotosAlbum(moviePath, nil, nil, nil);
+            NSLog(@"finished saving movie");
+        }
+    }
     // create MediaFile object
     NSDictionary* fileDict = [self getMediaDictionaryFromPath:moviePath ofType:nil];
     NSArray* fileArray = [NSArray arrayWithObject:fileDict];
