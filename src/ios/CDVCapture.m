@@ -286,6 +286,8 @@
         }
         if (isFrontFacing) {
             pickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
+        } else {
+            pickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
         }
         // CDVImagePicker specific property
         pickerController.callbackId = callbackId;
