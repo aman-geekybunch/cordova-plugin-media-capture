@@ -76,10 +76,11 @@
 
 @implementation CDVCapture
 @synthesize inUse;
-
+@synthesize saveVideoToGallery;
 - (void)pluginInitialize
 {
     self.inUse = NO;
+    self.saveVideoToGallery = FALSE;
 }
 
 - (void)captureAudio:(CDVInvokedUrlCommand*)command
@@ -213,6 +214,7 @@
 
 - (void)captureVideo:(CDVInvokedUrlCommand*)command
 {
+    
     NSString* callbackId = command.callbackId;
     NSDictionary* options = [command argumentAtIndex:0];
 
@@ -224,6 +226,23 @@
     // taking more than one video (limit) is only supported if provide own controls via cameraOverlayView property
     NSNumber* duration = [options objectForKey:@"duration"];
     NSNumber* quality = [options objectForKey:@"quality"];
+    NSNumber* frontFacing = [options objectForKey:@"frontFacing"];
+    NSNumber* saveToGallery = [options objectForKey:@"saveToGallery"];
+    if(![[options allKeys] containsObject: @"frontFacing"]) {
+        // set to TRUE as default
+        frontFacing = [NSNumber numberWithInt: 1];
+    }
+    if([[options allKeys] containsObject: @"saveToGallery"]) {
+        if (saveToGallery == 1) {
+            self.saveVideoToGallery = TRUE;
+        } else {
+            self.saveVideoToGallery = FALSE;
+        }
+    } else {
+        // set to TRUE as default
+        self.saveVideoToGallery = TRUE;
+    }
+   
     NSString* mediaType = nil;
 
     if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
@@ -282,6 +301,12 @@
             // pickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
             // pickerController.cameraFlashMode = UIImagePickerControllerCameraFlashModeAuto;
         }
+        // NOTE:- comment out below code to work it based on conditions
+        if (frontFacing == 1) {
+            pickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
+        } else {
+            pickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
+        }
         // CDVImagePicker specific property
         pickerController.callbackId = callbackId;
         pickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
@@ -293,13 +318,15 @@
 {
     // save the movie to photo album (only avail as of iOS 3.1)
 
-    /* don't need, it should automatically get saved
-     NSLog(@"can save %@: %d ?", moviePath, UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(moviePath));
-    if (&UIVideoAtPathIsCompatibleWithSavedPhotosAlbum != NULL && UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(moviePath) == YES) {
-        NSLog(@"try to save movie");
-        UISaveVideoAtPathToSavedPhotosAlbum(moviePath, nil, nil, nil);
-        NSLog(@"finished saving movie");
-    }*/
+    /* don't need, it should automatically get saved*/
+    if (self.saveVideoToGallery) {
+        NSLog(@"can save %@: %d ?", moviePath, UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(moviePath));
+        if (&UIVideoAtPathIsCompatibleWithSavedPhotosAlbum != NULL && UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(moviePath) == YES) {
+            NSLog(@"try to save movie");
+            UISaveVideoAtPathToSavedPhotosAlbum(moviePath, nil, nil, nil);
+            NSLog(@"finished saving movie");
+        }
+    }
     // create MediaFile object
     NSDictionary* fileDict = [self getMediaDictionaryFromPath:moviePath ofType:nil];
     NSArray* fileArray = [NSArray arrayWithObject:fileDict];
