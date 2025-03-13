@@ -80,7 +80,7 @@
 - (void)pluginInitialize
 {
     self.inUse = NO;
-    self.saveVideoToGallery = FALSE;
+    self.saveVideoToGallery = NO;
 }
 
 - (void)captureAudio:(CDVInvokedUrlCommand*)command
@@ -234,13 +234,13 @@
     }
     if([[options allKeys] containsObject: @"saveToGallery"]) {
         if ([saveToGallery boolValue]) {
-            self.saveVideoToGallery = TRUE;
+            self.saveVideoToGallery = YES;
         } else {
-            self.saveVideoToGallery = FALSE;
+            self.saveVideoToGallery = NO;
         }
     } else {
         // set to TRUE as default
-        self.saveVideoToGallery = TRUE;
+        self.saveVideoToGallery = YES;
     }
    
     NSString* mediaType = nil;
