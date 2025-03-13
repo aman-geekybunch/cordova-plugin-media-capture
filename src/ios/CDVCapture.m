@@ -233,7 +233,7 @@
         frontFacing = [NSNumber numberWithInt: 1];
     }
     if([[options allKeys] containsObject: @"saveToGallery"]) {
-        if (saveToGallery == 1) {
+        if ([saveToGallery boolValue]) {
             self.saveVideoToGallery = TRUE;
         } else {
             self.saveVideoToGallery = FALSE;
@@ -301,8 +301,7 @@
             // pickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
             // pickerController.cameraFlashMode = UIImagePickerControllerCameraFlashModeAuto;
         }
-        // NOTE:- comment out below code to work it based on conditions
-        if (frontFacing == 1) {
+        if ([frontFacing boolValue]) {
             pickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
         } else {
             pickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
