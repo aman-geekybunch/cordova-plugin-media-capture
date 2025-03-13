@@ -228,10 +228,21 @@
     NSNumber* quality = [options objectForKey:@"quality"];
     NSNumber* frontFacing = [options objectForKey:@"frontFacing"];
     NSNumber* saveToGallery = [options objectForKey:@"saveToGallery"];
-    if (saveToGallery == 1) {
+    if(![[options allKeys] containsObject: @"frontFacing"]) {
+        // set to TRUE as default
+        frontFacing = [NSNumber numberWithInt: 1];
+    }
+    if([[options allKeys] containsObject: @"saveToGallery"]) {
+        if (saveToGallery == 1) {
+            self.saveVideoToGallery = TRUE;
+        } else {
+            self.saveVideoToGallery = FALSE;
+        }
+    } else {
+        // set to TRUE as default
         self.saveVideoToGallery = TRUE;
     }
-    self.saveVideoToGallery = TRUE;
+   
     NSString* mediaType = nil;
 
     if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
@@ -290,13 +301,12 @@
             // pickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
             // pickerController.cameraFlashMode = UIImagePickerControllerCameraFlashModeAuto;
         }
-        pickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
         // NOTE:- comment out below code to work it based on conditions
-        /*if (frontFacing == 1) {
+        if (frontFacing == 1) {
             pickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
         } else {
             pickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
-        }*/
+        }
         // CDVImagePicker specific property
         pickerController.callbackId = callbackId;
         pickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
